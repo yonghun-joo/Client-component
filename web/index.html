@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        <meta charset="UTF-8" />
+        <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <style>
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 210px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #f9f9f9; /* 배경색 (필요하면 변경) */
+                overflow: hidden; /* 스크롤 제거 */
+            }
+            main {
+                width: 100vw; /* 가로는 화면 꽉 차게 */
+                height: 210px; /* 세로는 210px로 고정 */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            #chartContainer {
+                width: 100%; /* 부모 요소(main) 크기 그대로 사용 */
+                height: 100%; /* 부모 요소(main) 크기 그대로 사용 */
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <div id="chartContainer"></div>
+        </main>
+
+        <script>
+            const chart = echarts.init(document.getElementById("chartContainer"));
+
+            function setGraph(params) {
+                console.log(JSON.stringify(params, null, 2));
+
+                let graphColor = params.color;
+                let yMax = params.yMax;
+                let yMin = params.yMin;
+                let current = params.current;
+P
+                let data = params.data;
+
+                const option = {
+                    grid: {
+                        top: "30px",
+                        bottom: "30px",
+                        containLabel: true, // 라벨을 포함하여 패딩 계산
+                    },
+                    textStyle: {
+                        fontFamily: "Pretendard", // 전체 차트에 Pretendard 폰트 적용
+                        fontSize: 13,
+                    },
+                    xAxis: {
+                        type: "category",
+                        data: data.map((item) => item.date),
+                        axisLabel: {
+                            show: false, // 하단 라벨 숨김
+                        },
+                        axisLine: {
+                            show: false, // 하단 선 제거
+                        },
+                        axisTick: {
+                            // X축 눈금 제거
+                            show: false,
+                        },
+                        splitLine: {
+                            show: false, // 가로선 제거
+                        },
+                        boundaryGap: false, // | | 같은 간격 제거
+                    },
+                    yAxis: {
+                        type: "value",
+                        min: yMin.value, // Y축 최소값
+                        max: yMax.value, // Y축 최대값
+                        axisLabel: {
+                            color: "#78909D",
+                            formatter: (value) => {
+                                if (value === current) {
+                                    return `{highlight|${formatCurrency(value)}}`; // 강조된 라벨 스타일
+                                }
+                                return value == (yMax.value || yMin.value)
+                                    ? formatCurrency(value)
+                                    : ""; // 1억 단위만 표시
+                            },
+                            rich: {
+                                highlight: {
+                                    color: "#ffffff", // 강조된 라벨 색상
+                                    fontWeight: "bold", // 강조된 라벨 굵기
+                                    backgroundColor: graphColor, // 배경색 (옵션)
+                                    borderRadius: 4, // 라벨 테두리 반경 (옵션)
+                                    padding: [4, 8], // 라벨 내부 여백 (옵션)
+                                },
+                            },
+                        },
+                        position: "right", // Y축을 오른쪽으로 배치
+                        splitLine: {
+                            show: false, // Y축 가로선 제거
+                        },
+                    },
+                    dataZoom: [
+                        {
+                            type: "inside", // 내부 드래그로 줌 가능
+                            xAxisIndex: 0, // X축에서만 줌 활성화
+                        },
+                    ],
+                    series: [
+                        {
+                            name: "금액",
+                            type: "line",
+                            smooth: false, // 라인을 부드럽게 만듦
+                            lineStyle: {
+                                width: 3, // 현재 굵기의 2배
+                                color: graphColor,
+                            },
+                            symbol: "none", // 각 값의 마커 제거
+                            data: data.map((item) => item.value),
+                            markPoint: {
+                                clip: true,
+                                animation: true, // 애니메이션 활성화
+                                animationDelay: 500, // MarkPoint 애니메이션 지속 시간
+                                symbol: "circle", // balloon 제거
+                                symbolSize: 10, // 마커 크기를 최소화
+                                color: graphColor,
+                                itemStyle: {
+                                    color: graphColor, // 마커 색상 변경
+                                },
+                                data: [
+                                    {
+                                        name: "최고",
+                                        value: yMax.value, // 원래 값 유지
+                                        xAxis: yMax.index,
+                                        yAxis: yMax.value,
+                                        label: {
+                                            show: true,
+                                            position: "top", // 라벨 위치
+                                            formatter: () => `최고 ${formatCurrency(yMax.value)}`,
+                                            color: graphColor, // 라벨 색상 변경
+                                        },
+                                    },
+                                    {
+                                        name: "최저",
+                                        value: yMin.value, // 원래 값 유지
+                                        xAxis: yMin.index,
+                                        yAxis: yMin.value,
+                                        label: {
+                                            show: true,
+                                            position: "bottom", // 라벨 위치
+                                            formatter: () => `최저 ${formatCurrency(yMin.value)}`,
+                                            color: graphColor, // 라벨 색상 변경
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                };
+
+                chart.setOption(option);
+                chart.resize();
+            }
+
+            const formatCurrency = (value) => {
+                const billion = 100000000;
+                const tenMillion = 10000000;
+
+                if (value >= billion) {
+                    return `${(value / billion).toFixed(1)}억`;
+                } else if (value >= tenMillion) {
+                    return `${Math.floor(value / billion)}억 ${Math.round(
+                        (value % billion) / tenMillion
+                    )}천`;
+                } else {
+                    return `${Math.round(value / tenMillion)}천`;
+                }
+            };
+        </script>
+    </body>
+</html>

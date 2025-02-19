@@ -1,33 +1,67 @@
-# Gradle files
+# ------------------------------
+# ✅ 공통 (General)
+# ------------------------------
+.DS_Store
+Thumbs.db
+*.log
+logs/
+*.swp
+*.swo
+*.swn
+.env
+.vscode/
+.idea/
+
+# ------------------------------
+# ✅ 웹 (Web: Node.js, React, Vue, Next.js)
+# ------------------------------
+node_modules/
+dist/
+build/
+.cache/
+.nyc_output/
+coverage/
+public/
+.next/
+out/
+.storybook/
+*.lock
+
+# ------------------------------
+# ✅ 안드로이드 (Android)
+# ------------------------------
 .gradle/
 build/
-
-# Local configuration file (sdk path, etc)
-local.properties
-
-# Log/OS Files
-*.log
-
-# Android Studio generated files and folders
-captures/
-.externalNativeBuild/
-.cxx/
-*.apk
-output.json
-
-# IntelliJ
+!gradle/wrapper/gradle-wrapper.jar
 *.iml
 .idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+local.properties
+**/intermediates/
+**/outputs/
+**/generated/
+captures/
+output.json
 
-# Keystore files
-*.jks
-*.keystore
-
-# Google Services (e.g. APIs or Firebase)
-google-services.json
-
-# Android Profiling
-*.hprof
+# ------------------------------
+# ✅ iOS (Xcode, Swift)
+# ------------------------------
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xcscmblueprint
+*.xcworkspace
+Pods/
+DerivedData/
+Carthage/
+Carthage/Checkouts/
+Carthage/Build/
+.swiftpm/
+Package.resolved
+build/
+*.app
+*.ipa
+*.dSYM.zip
+*.dSYM

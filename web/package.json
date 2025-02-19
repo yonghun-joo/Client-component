@@ -1,0 +1,23 @@
+{
+  "name": "Client-Component",
+  "version": "1.0.0",
+  "description": "Client-Component",
+  "main": "server.js",
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^3.2.4",
+    "@storybook/addon-essentials": "^8.5.4",
+    "@storybook/addon-interactions": "^8.5.4",
+    "@storybook/blocks": "^8.5.4",
+    "@storybook/html": "^8.5.4",
+    "@storybook/html-vite": "^8.5.4",
+    "@storybook/test": "^8.5.4",
+    "@storybook/web-components": "^8.5.7",
+    "@storybook/web-components-vite": "^8.5.7",
+    "lit": "^3.2.1",
+    "storybook": "^8.5.4"
+  }
+}
